@@ -1,0 +1,30 @@
+version: '3'
+services:
+    statsd_exporter:
+      container_name: statsd_exporter 
+      image: prom/statsd-exporter
+      command: "--statsd.listen-udp=:8125  --statsd.listen-tcp=:8125 --web.listen-address=:9102"
+      ports:
+        - "9123:9102"
+        - "8125:8125/udp"
+        - "8125:8125/tcp"
+    
+    http-to-statsd:
+      build: .
+      image: http-to-statsd
+      container_name: http_to_statsd_exporter 
+      ports:
+        - "5000:5000"
+      environment:
+        STATSD_HOST: statsd_exporter
+        STATSD_PORT: 8125
+      volumes:
+        - "./metrics_whitelist.json:/app/metrics_whitelist.json"
+ 
+    prometheus:
+      image: prom/prometheus
+      command: "--config.file=/tmp/prometheus.yml --web.listen-address '0.0.0.0:9090'"
+      ports:
+        - "9090:9090"
+      volumes:
+        - "./prometheus.yml:/tmp/prometheus.yml"

@@ -1,0 +1,8 @@
+{
+  "metrics": {
+    "user_signups": {
+      "labels": ["region", "platform"]
+    }
+  }
+}
+
