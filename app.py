@@ -30,7 +30,7 @@ else:
 @app.route('/counter', methods=['POST'])
 def increment_counter():
     metric_name = request.args.get('metric')
-    count = int(request.args.get('count', 1))  
+    count = 1 
 
     if not metric_name or metric_name not in metrics_config['metrics']:
         return "Invalid metric name. It must be whitelisted.", 400
@@ -38,7 +38,7 @@ def increment_counter():
     if not VALID_METRIC_NAME.match(metric_name):
         return "Invalid metric name format. Must start with a letter or underscore and contain only alphanumeric characters or underscores.", 400
 
-    labels = {k: v for k, v in request.args.items() if k not in ['metric', 'count']}
+    labels = {k: v for k, v in request.args.items() if k not in ['metric']}
 
     allowed_labels = metrics_config['metrics'][metric_name].get('labels', [])
     invalid_labels = [label for label in labels.keys() if label not in allowed_labels]
